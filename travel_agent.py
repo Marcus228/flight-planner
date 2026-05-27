@@ -75,11 +75,12 @@ class FlightExtraction(BaseModel):
 
     @model_validator(mode = 'after')
     def validate_chronology(self) -> 'FlightExtraction':
-        # 1. If it's a one-way flight, there is nothing to compare.
+        # if it's a one-way flight, return the instance
         if not self.return_window:
             return self
 
-        # 2. Parse the ISO strings into comparable datetime objects
+        # parse the ISO strings into comparable datetime objects
+        # if the parse fails, ValueError is raised
         try:
             dep_start = datetime.strptime(self.departure_window.start_date, "%Y-%m-%d")
             ret_start = datetime.strptime(self.return_window.start_date, "%Y-%m-%d")
@@ -88,12 +89,12 @@ class FlightExtraction(BaseModel):
             # or this block will catch it.
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
-        # 3. The actual logic check
+        # check dates are chronological
         if ret_start < dep_start:
             raise ValueError(
                 f"Logical error: The return start date ({self.return_window.start_date}) "
                 f"cannot be earlier than the departure start date ({self.departure_window.start_date})."
             )
 
-        # 4. If all checks pass, return the instance
+        # if all checks pass, return the instance
         return self
