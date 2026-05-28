@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # loading the environment variables.
 load_dotenv()
 
-# SerpApi Endpoint for Google Flights
+# SerpApi endpoint for Google Flights
 SERPAPI_URL = "https://serpapi.com/search"
 
 # determines how many top results to retrieve per API call
@@ -38,7 +38,7 @@ def extract_essential_flight_data(pre_processed_flight: dict) -> dict:
 
 async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_key: str) -> list:
     """Executes a single HTTP request to SerpApi."""
-    # Map friendly internal strings to SerpApi's structural integers
+    # map friendly internal strings to SerpApi's structural integers
     api_type = "1" if query.get("type") == "round_trip" else "2"
 
     params = {
@@ -46,7 +46,7 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
         "departure_id": query["origin"],
         "arrival_id": query["destination"],
         "outbound_date": query["departure_date"],
-        "type": api_type,  # Use integer strings '1' or '2'
+        "type": api_type,
         "currency": "USD",
         "hl": "en",
         "api_key": api_key
@@ -57,7 +57,7 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
 
     async with session.get(SERPAPI_URL, params=params) as response:
         if response.status != 200:
-            # Print response text for debugging clear error explanations
+            # print response text for debugging clear error explanations
             error_text = await response.text()
             print(f"API Error {response.status} for {query['departure_date']}: {error_text}")
             return []
@@ -91,21 +91,21 @@ async def fetcher_node(state: FlightAgentState) -> dict:
         for i in range(0, len(api_queries), BATCH_SIZE):
             batch = api_queries[i:i + BATCH_SIZE]
 
-            # Create a list of asynchronous tasks for the current batch
+            # create a list of asynchronous tasks for the current batch
             tasks = [fetch_single_query(session, query, api_key) for query in batch]
 
-            # Execute them all simultaneously and wait for the batch to finish
+            # execute tasks simultaneously and wait for the batch to finish
             batch_results = await asyncio.gather(*tasks)
 
-            # Flatten the list of lists into a single array
+            # flatten the list of lists into a single array
             for res_list in batch_results:
                 all_results.extend(res_list)
 
-            # Optional: Short sleep between batches to respect rate limits
+            # short sleep between batches to respect rate limits
             if i + BATCH_SIZE < len(api_queries):
                 await asyncio.sleep(1.0)
 
-    # Sort results purely by price before returning to state
+    # sort results purely by price before returning to state
     sorted_results = sorted(all_results, key=lambda x: x.get("price", float('inf')))
 
     print(f"[Fetcher Node] Successfully retrieved and cleaned {len(sorted_results)} flight options.")

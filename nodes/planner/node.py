@@ -30,13 +30,13 @@ def planner_node(state: FlightAgentState) -> dict:
 
     api_queries = []
 
-    # Permutation Logic for Round-Trip
+    # permutation logic for round-trip
     if ret_window:
         return_dates = generate_date_range(ret_window["start_date"], ret_window["end_date"])
 
         for dep in departure_dates:
             for ret in return_dates:
-                # Chronological safety check
+                # chronological safety check
                 if ret >= dep:
                     api_queries.append({
                         "origin": origin,
@@ -47,7 +47,7 @@ def planner_node(state: FlightAgentState) -> dict:
                         "type": "round_trip"
                     })
 
-    # Permutation Logic for One-Way
+    # permutation logic for one-way
     else:
         for dep in departure_dates:
             api_queries.append({
@@ -60,7 +60,7 @@ def planner_node(state: FlightAgentState) -> dict:
 
     print(f"[Planner Node] Generated the complete set of {len(api_queries)} API queries.")
 
-    # Return the list of API queries
+    # return the list of API queries
     return {
         "api_queries": api_queries
     }

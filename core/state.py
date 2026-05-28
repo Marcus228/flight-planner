@@ -2,18 +2,18 @@ from typing import TypedDict, Optional, List, Dict, Any
 
 # global state
 class FlightAgentState(TypedDict):
-    # Inputs
+    # inputs
     user_input: str
 
-    # Control State / Metadata
+    # control state / metadata
     retry_count: int
     error_message: Optional[str]
 
-    # Outputs of Extractor Stage
+    # outputs of extractor stage
     parsed_parameters: Optional[dict]
 
-    # Outputs of the Planner stage
+    # outputs of the planner stage
     api_queries: List[Dict[str, Any]]
 
-    # Outputs of the Fetcher stage
+    # outputs of the fetcher stage
     flight_results: List[Dict[str, Any]]

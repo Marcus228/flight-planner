@@ -31,7 +31,7 @@ def extractor_node(state: FlightAgentState) -> dict:
     else:
         user_prompt = f"User Input Request: '{user_input}'"
 
-    # Bind the LLM to the Pydantic schema
+    # bind the LLM to the Pydantic schema
     structured_llm = get_structured_llm(FlightSearchIntent)
 
     try:
@@ -58,11 +58,11 @@ def route_after_extraction(state: FlightAgentState) -> str:
     retry_count = state.get("retry_count", 0)
     error_message = state.get("error_message")
 
-    # Happy Path: Valid data generated, no errors
+    # happy path: Valid data generated, no errors
     if state.get("parsed_parameters") and not error_message:
         return "planner"
 
-    # Timeout Guard: If errors persist past threshold, break execution hard
+    # timeout guard: if errors persist past threshold, break execution hard
     if retry_count >= MAX_EXTRACT_RETRIES:
         raise TimeoutError(
             f"Agent Execution Halted: Extractor stuck in infinite correction loop. "
@@ -70,6 +70,6 @@ def route_after_extraction(state: FlightAgentState) -> str:
             f"Final validation trace: {error_message}"
         )
 
-    # Feedback Loop Path: Errors exist but budget remains. Route back to extractor
+    # feedback loop path: errors exist but budget remains -> route back to extractor
     print(f"Validation failure detected on attempt {retry_count}. Retrying Extraction...")
     return "extractor"

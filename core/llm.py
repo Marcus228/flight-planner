@@ -13,13 +13,13 @@ def get_structured_llm(schema, temperature: float = 0.0):
     Centralized factory for instantiating the LLM and binding it to a schema.
     Easily hot-swappable for different models or providers.
     """
-    # Fetch the LLM API key from .env
+    # fetch the LLM API key from .env
     custom_key = os.environ.get("LLM_API_KEY")
 
     if not custom_key:
         raise ValueError("CRITICAL: LLM_API_KEY environment variable is not set.")
 
-    # Inject the key explicitly using the api_key parameter
+    # inject the key explicitly using the api_key parameter
     llm = ChatGoogleGenerativeAI(
         model="gemini-2.5-flash",
         temperature=temperature,
