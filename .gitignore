@@ -1,2 +1,6 @@
 # IDE folder
 .idea
+# ignore tests and diagnostic script
+tests
+# ignore the environmental variables
+.env
