@@ -1,8 +1,8 @@
-# model of choice
-from langchain_google_genai import ChatGoogleGenerativeAI
+# import the model factory
+from core.llm import get_structured_llm
 # some crucial imports
 from core.state import FlightAgentState
-from core.config import MAX_EXTRACT_RETRIES, EXTRACTOR_GEMINI_MODEL
+from core.config import MAX_EXTRACT_RETRIES
 # this TypedDict is the binder of the node
 from nodes.extractor.schema import FlightSearchIntent
 
@@ -31,10 +31,8 @@ def extractor_node(state: FlightAgentState) -> dict:
     else:
         user_prompt = f"User Input Request: '{user_input}'"
 
-    llm = ChatGoogleGenerativeAI(model=EXTRACTOR_GEMINI_MODEL, temperature=0.0)
-
     # Bind the LLM to the Pydantic schema
-    structured_llm = llm.with_structured_output(FlightSearchIntent, method="json_schema")
+    structured_llm = get_structured_llm(FlightSearchIntent)
 
     try:
         extracted_object = structured_llm.invoke([
@@ -73,5 +71,5 @@ def route_after_extraction(state: FlightAgentState) -> str:
         )
 
     # Feedback Loop Path: Errors exist but budget remains. Route back to extractor
-    print(f"⚠️ Validation failure detected on attempt {retry_count}. Retrying Extraction...")
+    print(f"Validation failure detected on attempt {retry_count}. Retrying Extraction...")
     return "extractor"
