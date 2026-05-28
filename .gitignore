@@ -2,6 +2,5 @@
 .idea
 # ignore tests and diagnostic script
 tests
-check_models.py
 # ignore the environmental variables
 .env
