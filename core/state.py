@@ -10,4 +10,4 @@ class FlightAgentState(TypedDict):
     error_message: Optional[str]
 
     # Outputs of this stage
-    parsed_parameters: Optional[dict]  # Will store FlightExtraction.model_dump()
+    parsed_parameters: Optional[dict]  # Will store FlightSearchIntent.model_dump()
