@@ -27,6 +27,7 @@ def planner_node(state: FlightAgentState) -> dict:
     ret_window = params.get("return_window")
 
     departure_dates = generate_date_range(dep_window["start_date"], dep_window["end_date"])
+    requested_class = params.get("flight_class")
 
     api_queries = []
 
@@ -44,7 +45,8 @@ def planner_node(state: FlightAgentState) -> dict:
                         "departure_date": dep,
                         "return_date": ret,
                         "airlines": airlines,
-                        "type": "round_trip"
+                        "type": "round_trip",
+                        "flight_class": requested_class
                     })
 
     # permutation logic for one-way
@@ -55,7 +57,8 @@ def planner_node(state: FlightAgentState) -> dict:
                 "destination": destination,
                 "departure_date": dep,
                 "airlines": airlines,
-                "type": "one_way"
+                "type": "one_way",
+                "flight_class": requested_class
             })
 
     print(f"[Planner Node] Generated the complete set of {len(api_queries)} API queries.")

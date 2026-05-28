@@ -15,6 +15,14 @@ SERPAPI_URL = "https://serpapi.com/search"
 # 2 is recommended to ensure state is manageable
 TOP_RESULTS = 2
 
+# flight classes specification as governed by the SerpAPI library
+FLIGHT_CLASS_MAPPING: dict[str, int] = {
+    "Economy": 1,
+    "Premium Economy": 2,
+    "Business": 3,
+    "First": 4,
+}
+
 def extract_essential_flight_data(pre_processed_flight: dict) -> dict:
     """
     Strips down the massive Google Flights JSON object into a lightweight dictionary
@@ -35,11 +43,13 @@ def extract_essential_flight_data(pre_processed_flight: dict) -> dict:
     except Exception:
         return {}
 
-
 async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_key: str) -> list:
     """Executes a single HTTP request to SerpApi."""
     # map friendly internal strings to SerpApi's structural integers
     api_type = "1" if query.get("type") == "round_trip" else "2"
+
+    travel_class_str = query.get("travel_class")
+    flight_class_id = FLIGHT_CLASS_MAPPING.get(travel_class_str)
 
     params = {
         "engine": "google_flights",
@@ -47,9 +57,10 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
         "arrival_id": query["destination"],
         "outbound_date": query["departure_date"],
         "type": api_type,
+        "travel_class": flight_class_id,
         "currency": "USD",
         "hl": "en",
-        "api_key": api_key
+        "api_key": api_key,
     }
 
     if query.get("type") == "round_trip" and "return_date" in query:

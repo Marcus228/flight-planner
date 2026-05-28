@@ -1,7 +1,17 @@
 from typing import Literal
-# airline configuration
+from enum import Enum
+
+# allowed airlines to infer the information from
 AllowedAirlines = Literal["Virgin Atlantic", "Swiss", "Lufthansa", "Turkish", "KLM", "Air France",
                           "British Airways", "Air India", "Emirates", "Etihad"]
+
+# travel classification enum class
+# used to extract flights of the specific class
+class TravelClass(str, Enum):
+    ECONOMY = "Economy"
+    PREMIUM_ECONOMY = "Premium Economy"
+    BUSINESS = "Business"
+    FIRST = "First"
 
 # max retry threshold configuration for extractor node
 #   if the model fails to provide the reply after MAX_EXTRACT_REPLIES,
