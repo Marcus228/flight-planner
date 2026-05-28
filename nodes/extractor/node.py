@@ -2,7 +2,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 # some crucial imports
 from core.state import FlightAgentState
-from core.config import MAX_EXTRACT_RETRIES
+from core.config import MAX_EXTRACT_RETRIES, EXTRACTOR_GEMINI_MODEL
 # this TypedDict is the binder of the node
 from nodes.extractor.schema import FlightSearchIntent
 
@@ -31,7 +31,7 @@ def extractor_node(state: FlightAgentState) -> dict:
     else:
         user_prompt = f"User Input Request: '{user_input}'"
 
-    llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.0)
+    llm = ChatGoogleGenerativeAI(model=EXTRACTOR_GEMINI_MODEL, temperature=0.0)
 
     # Bind the LLM to the Pydantic schema
     structured_llm = llm.with_structured_output(FlightSearchIntent, method="json_schema")
