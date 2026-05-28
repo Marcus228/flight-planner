@@ -14,3 +14,6 @@ class FlightAgentState(TypedDict):
 
     # Outputs of the Planner stage
     api_queries: List[Dict[str, Any]]
+
+    # Outputs of the Fetcher stage
+    flight_results: List[Dict[str, Any]]
