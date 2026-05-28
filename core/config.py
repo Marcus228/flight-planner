@@ -3,8 +3,11 @@ from typing import Literal
 AllowedAirlines = Literal["Virgin Atlantic", "Swiss", "Lufthansa", "Turkish", "KLM", "Air France",
                           "British Airways", "Air India", "Emirates", "Etihad"]
 
-# max retry threshold configuration
+# max retry threshold configuration for extractor node
+#   if the model fails to provide the reply after MAX_EXTRACT_REPLIES,
+#   the timeout is declared
 MAX_EXTRACT_RETRIES = 3
 
-# SerpApi Endpoint for Google Flights
-SERPAPI_URL = "https://serpapi.com/search"
+# BATCHING LOGIC for SerpAPI in fetcher node.
+# The API allows concurrency, but batching is defaulted to size 5 to be safe
+BATCH_SIZE = 5
