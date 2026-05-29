@@ -25,20 +25,28 @@ FLIGHT_CLASS_MAPPING: dict[str, int] = {
 
 def extract_essential_flight_data(pre_processed_flight: dict, requested_class: str) -> dict:
     """
-    Strips down the massive Google Flights JSON object into a lightweight dictionary
+    Strips down the Google Flights JSON object into a lightweight dictionary
     to protect the LangGraph state memory constraints.
     """
     try:
-        flights_info = pre_processed_flight.get("flights", [{}])[0]
+        flights = pre_processed_flight.get("flights", [])
+
+        # Safely grab outbound (index 0) and return (index 1) if they exist
+        outbound = flights[0] if len(flights) > 0 else {}
+        return_leg = flights[1] if len(flights) > 1 else {}
+
         return {
-            "airline": flights_info.get("airline", "Unknown"),
-            "departure_airport": flights_info.get("departure_airport", {}).get("id", "Unknown"),
-            "arrival_airport": flights_info.get("arrival_airport", {}).get("id", "Unknown"),
-            "departure_time": flights_info.get("departure_airport", {}).get("time", "Unknown"),
-            "arrival_time": flights_info.get("arrival_airport", {}).get("time", "Unknown"),
+            # outbound
+            "airline": outbound.get("airline", "Unknown"),
+            "departure_airport": outbound.get("departure_airport", {}).get("id", "Unknown"),
+            "arrival_airport": outbound.get("arrival_airport", {}).get("id", "Unknown"),
+            "departure_time": outbound.get("departure_airport", {}).get("time", "Unknown"),
+            # return
+            "return_time": return_leg.get("departure_airport", {}).get("time", "N/A"),
+            "return_airport": return_leg.get("departure_airport", {}).get("id", "N/A"),
+            # general information
             "duration": pre_processed_flight.get("total_duration"),
             "price": pre_processed_flight.get("price"),
-            "booking_token": pre_processed_flight.get("booking_token", ""),
             "flight_class": requested_class,
         }
     except Exception:
