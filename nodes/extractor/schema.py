@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
 from typing import List, Optional
-from core.config import AllowedAirlines
+from core.config import AllowedAirlines, TravelClass
 from datetime import datetime
 
 # base model for storing the date window for departure/return
@@ -44,7 +44,14 @@ class FlightSearchIntent(BaseModel):
         default = None,
     )
     airlines: List[AllowedAirlines] = Field(
+        default=[AllowedAirlines.ALL],
         description="The list of airlines explicitly requested by the user.",
+    )
+    flight_class: TravelClass = Field(
+        default=TravelClass.ECONOMY,
+        description=("The flight class of the flight requested by the user." 
+                     "CRITICAL INSTRUCTION: Look for a string combination '* class', where * is any word, in user input."
+                     "The * word is likely to be the flight class"),
     )
 
     @model_validator(mode = 'after')

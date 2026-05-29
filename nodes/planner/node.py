@@ -19,14 +19,14 @@ def planner_node(state: FlightAgentState) -> dict:
     if not params:
         raise ValueError("Planner node executed without parsed_parameters in the state.")
 
-    origin = params.get("origin")
-    destination = params.get("destination")
-    airlines = params.get("airlines", [])
+    origin = params["origin"]
+    destination = params["destination"]
+    airlines = params["airlines"]
+    departure_dates = params["departure_window"]
+    requested_class = params["flight_class"]
 
-    dep_window = params.get("departure_window")
+    # Optional fields should still use .get()
     ret_window = params.get("return_window")
-
-    departure_dates = generate_date_range(dep_window["start_date"], dep_window["end_date"])
 
     api_queries = []
 
@@ -44,7 +44,8 @@ def planner_node(state: FlightAgentState) -> dict:
                         "departure_date": dep,
                         "return_date": ret,
                         "airlines": airlines,
-                        "type": "round_trip"
+                        "type": "round_trip",
+                        "flight_class": requested_class
                     })
 
     # permutation logic for one-way
@@ -55,7 +56,8 @@ def planner_node(state: FlightAgentState) -> dict:
                 "destination": destination,
                 "departure_date": dep,
                 "airlines": airlines,
-                "type": "one_way"
+                "type": "one_way",
+                "flight_class": requested_class
             })
 
     print(f"[Planner Node] Generated the complete set of {len(api_queries)} API queries.")
