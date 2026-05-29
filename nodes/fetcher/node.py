@@ -2,7 +2,7 @@ import os
 import asyncio
 import aiohttp
 from core.state import FlightAgentState
-from core.config import BATCH_SIZE
+from core.config import BATCH_SIZE, TOP_RESULTS
 from dotenv import load_dotenv
 
 # loading the environment variables.
@@ -10,10 +10,6 @@ load_dotenv()
 
 # SerpApi endpoint for Google Flights
 SERPAPI_URL = "https://serpapi.com/search"
-
-# determines how many top results to retrieve per API call
-# 2 is recommended to ensure state is manageable
-TOP_RESULTS = 2
 
 # flight classes specification as governed by the SerpAPI library
 FLIGHT_CLASS_MAPPING: dict[str, int] = {

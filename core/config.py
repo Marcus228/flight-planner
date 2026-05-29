@@ -31,3 +31,7 @@ MAX_EXTRACT_RETRIES = 3
 # BATCHING LOGIC for SerpAPI in fetcher node.
 # The API allows concurrency, but batching is defaulted to size 5 to be safe
 BATCH_SIZE = 5
+
+# determines how many top results to retrieve per API call
+# 2 is recommended to ensure state is manageable
+TOP_RESULTS = 2
