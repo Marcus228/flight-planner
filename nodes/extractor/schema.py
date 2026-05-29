@@ -33,8 +33,20 @@ class DateWindow(BaseModel):
 
 # base model for tracking the user search intent
 class FlightSearchIntent(BaseModel):
-    origin: str
-    destination: str
+    origin: str = Field(
+        description=(
+            "The strictly uppercase 3-letter IATA airport code for departure. "
+            "CRITICAL INSTRUCTION: If the user provides a city name (e.g., 'London'), "
+            "you MUST use your knowledge to convert it to the primary 3-letter airport code (e.g., 'LHR')."
+        )
+    )
+    destination: str = Field(
+        description=(
+            "The strictly uppercase 3-letter IATA airport code for arrival. "
+            "CRITICAL INSTRUCTION: If the user provides a city name (e.g., 'Paris'), "
+            "you MUST use your knowledge to convert it to the primary 3-letter airport code (e.g., 'CDG')."
+        )
+    )
     departure_window: DateWindow = Field(
         description="The date range when user wants to depart.",
     )

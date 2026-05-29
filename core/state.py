@@ -17,3 +17,6 @@ class FlightAgentState(TypedDict):
 
     # outputs of the fetcher stage
     flight_results: List[Dict[str, Any]]
+
+    # csv file path
+    csv_file_path: str | None
