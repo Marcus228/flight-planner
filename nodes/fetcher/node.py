@@ -23,7 +23,7 @@ FLIGHT_CLASS_MAPPING: dict[str, int] = {
     "First": 4,
 }
 
-def extract_essential_flight_data(pre_processed_flight: dict) -> dict:
+def extract_essential_flight_data(pre_processed_flight: dict, requested_class: str) -> dict:
     """
     Strips down the massive Google Flights JSON object into a lightweight dictionary
     to protect the LangGraph state memory constraints.
@@ -36,9 +36,10 @@ def extract_essential_flight_data(pre_processed_flight: dict) -> dict:
             "arrival_airport": flights_info.get("arrival_airport", {}).get("id", "Unknown"),
             "departure_time": flights_info.get("departure_airport", {}).get("time", "Unknown"),
             "arrival_time": flights_info.get("arrival_airport", {}).get("time", "Unknown"),
-            "duration": pre_processed_flight.get("total_duration", 0),
-            "price": pre_processed_flight.get("price", 0),
-            "booking_token": pre_processed_flight.get("booking_token", "")
+            "duration": pre_processed_flight.get("total_duration"),
+            "price": pre_processed_flight.get("price"),
+            "booking_token": pre_processed_flight.get("booking_token", ""),
+            "flight_class": requested_class,
         }
     except Exception:
         return {}
@@ -48,8 +49,8 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
     # map friendly internal strings to SerpApi's structural integers
     api_type = "1" if query.get("type") == "round_trip" else "2"
 
-    travel_class_str = query.get("travel_class")
-    flight_class_id = FLIGHT_CLASS_MAPPING.get(travel_class_str)
+    requested_flight_class_str = query["flight_class"]
+    requested_flight_class_id = FLIGHT_CLASS_MAPPING[requested_flight_class_str]
 
     params = {
         "engine": "google_flights",
@@ -57,7 +58,7 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
         "arrival_id": query["destination"],
         "outbound_date": query["departure_date"],
         "type": api_type,
-        "travel_class": flight_class_id,
+        "travel_class": requested_flight_class_id,
         "currency": "USD",
         "hl": "en",
         "api_key": api_key,
@@ -75,7 +76,7 @@ async def fetch_single_query(session: aiohttp.ClientSession, query: dict, api_ke
 
         data = await response.json()
         best_flights = data.get("best_flights", [])
-        cleaned_results = [extract_essential_flight_data(f) for f in best_flights[:2]]
+        cleaned_results = [extract_essential_flight_data(f, requested_flight_class_str) for f in best_flights[:TOP_RESULTS]]
         return [f for f in cleaned_results if f]
 
 
@@ -116,8 +117,9 @@ async def fetcher_node(state: FlightAgentState) -> dict:
             if i + BATCH_SIZE < len(api_queries):
                 await asyncio.sleep(1.0)
 
-    # sort results purely by price before returning to state
-    sorted_results = sorted(all_results, key=lambda x: x.get("price", float('inf')))
+    # sort results by airline
+    # the get defaults to zzzzz to place the unknown airlines last.
+    sorted_results = sorted(all_results, key=lambda x: x.get("airline", "zzzzzz"))
 
     print(f"[Fetcher Node] Successfully retrieved and cleaned {len(sorted_results)} flight options.")
 
