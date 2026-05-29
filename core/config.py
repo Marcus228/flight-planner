@@ -1,9 +1,19 @@
 from typing import Literal
 from enum import Enum
 
-# allowed airlines to infer the information from
-AllowedAirlines = Literal["Virgin Atlantic", "Swiss", "Lufthansa", "Turkish", "KLM", "Air France",
-                          "British Airways", "Air India", "Emirates", "Etihad"]
+# allowed airlines to infer the information about
+class AllowedAirlines(str, Enum):
+    VIRGIN_ATLANTIC = "Virgin Atlantic"
+    SWISS = "Swiss"
+    LUFTHANSA = "Lufthansa"
+    TURKISH = "Turkish"
+    KLM = "KLM"
+    AIR_FRANCE = "Air France"
+    BRITISH_AIRWAYS = "British Airways"
+    AIR_INDIA = "Air India"
+    EMIRATES = "Emirates"
+    ETIHAD = "Etihad"
+    ALL = "All"
 
 # travel classification enum class
 # used to extract flights of the specific class

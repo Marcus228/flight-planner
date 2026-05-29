@@ -19,15 +19,14 @@ def planner_node(state: FlightAgentState) -> dict:
     if not params:
         raise ValueError("Planner node executed without parsed_parameters in the state.")
 
-    origin = params.get("origin")
-    destination = params.get("destination")
-    airlines = params.get("airlines", [])
+    origin = params["origin"]
+    destination = params["destination"]
+    airlines = params["airlines"]
+    departure_dates = params["departure_window"]
+    requested_class = params["flight_class"]
 
-    dep_window = params.get("departure_window")
+    # Optional fields should still use .get()
     ret_window = params.get("return_window")
-
-    departure_dates = generate_date_range(dep_window["start_date"], dep_window["end_date"])
-    requested_class = params.get("flight_class")
 
     api_queries = []
 
