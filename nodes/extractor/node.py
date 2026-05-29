@@ -60,7 +60,7 @@ def route_after_extraction(state: FlightAgentState) -> str:
 
     # happy path: Valid data generated, no errors
     if state.get("parsed_parameters") and not error_message:
-        return "planner"
+        return "mcp_fetcher"
 
     # timeout guard: if errors persist past threshold, break execution hard
     if retry_count >= MAX_EXTRACT_RETRIES:

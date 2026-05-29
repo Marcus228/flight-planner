@@ -3,9 +3,8 @@ from core.state import FlightAgentState
 
 # importing the nodes
 from nodes.extractor.node import extractor_node, route_after_extraction
-from nodes.planner.node import planner_node
-from nodes.fetcher.node import fetcher_node
 from nodes.formatter.node import formatter_node
+from nodes.mcp_fetcher.node import mcp_fetcher_node
 
 # program control
 import asyncio
@@ -13,14 +12,11 @@ import asyncio
 def build_graph():
     workflow = StateGraph(FlightAgentState)
     workflow.add_node("extractor", extractor_node)
-    workflow.add_node("planner", planner_node)
-    workflow.add_node("fetcher", fetcher_node)
+    workflow.add_node("mcp_fetcher", mcp_fetcher_node)
     workflow.add_node("formatter", formatter_node)
 
     workflow.add_edge(START, "extractor")
-    workflow.add_edge("extractor", "planner")
-    workflow.add_edge("planner", "fetcher")
-    workflow.add_edge("fetcher", "formatter")
+    workflow.add_edge("mcp_fetcher", "formatter")
     workflow.add_edge("formatter", END)
 
     workflow.add_conditional_edges(
@@ -30,7 +26,7 @@ def build_graph():
             # loop back on failure
             "extractor",
             # move forward on success
-            "planner",
+            "mcp_fetcher",
         ]
     )
 
@@ -41,8 +37,11 @@ def build_graph():
 async def main():
     app = build_graph()
 
-    user_prompt : str = input("Please enter the required flight details:")
-
+    # user_prompt : str = input("Please enter the required flight details:")
+    user_prompt : str = ("I need a round-trip flight from London (LHR) to Tokyo (HND). "
+                         "I want to leave sometime between 2026-10-10 and 2026-10-12, "
+                         "and I want to return between 2026-10-20 and 2026-10-21."
+                         "I want to fly in Business class.")
     print(f"\n[USER INPUT] {user_prompt}\n" + "-" * 50)
 
     initial_state: FlightAgentState = {
