@@ -5,7 +5,7 @@ from core.state import FlightAgentState
 # define the output directory and filename
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 # the OUTPUT_DIR assumes that the formatter is called in core directory.
-OUTPUT_DIR = os.path.join(CURRENT_DIR, "..", "output")
+OUTPUT_DIR = os.path.join(CURRENT_DIR, "..", "..", "output")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "flight_results.csv")
 
 

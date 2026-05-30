@@ -1,7 +1,7 @@
 import os
 import json
-
 import aiohttp
+
 from langchain.agents import create_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_mcp_adapters.tools import load_mcp_tools
@@ -59,7 +59,7 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
             api_key=os.environ.get("LLM_API_KEY")
         )
 
-        # We use LangGraph's prebuilt ReAct agent to handle the tool execution loop
+        # use LangGraph's prebuilt ReAct agent to handle the tool execution loop
         agent_executor = create_agent(llm, tools)
 
         agent_prompt = f"""
@@ -87,11 +87,11 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
 
         if message.type == "ai":
             if message.content:
-                print(f"\n🤖 [AI Reasoning]: {message.content}")
+                print(f"\n[AI Reasoning]: {message.content}")
             if hasattr(message, "tool_calls") and message.tool_calls:
-                print(f"\n🛠️ [AI Calling Tool]: {json.dumps(message.tool_calls, indent=2)}")
+                print(f"\n[AI Calling Tool]: {json.dumps(message.tool_calls, indent=2)}")
         if message.type == "tool":
-            print(f"\n📦 [Tool Response Raw]: {str(message.content)[:500]}...")
+            print(f"\n[Tool Response Raw]: {str(message.content)[:500]}...")
 
             try:
                 raw_content = message.content
@@ -111,11 +111,11 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
                 tool_data = json.loads(raw_content)
 
                 if "error" in tool_data:
-                    print(f"\n❌ [SerpApi Error]: {tool_data['error']}")
+                    print(f"\n[SerpApi Error]: {tool_data['error']}")
                     continue
 
                 if "best_flights" not in tool_data:
-                    print("\n⚠️ [Warning] 'best_flights' array not found in this response.")
+                    print("\n[Warning] 'best_flights' array not found in this response.")
 
                 search_metadata = tool_data.get("search_metadata", {})
                 json_endpoint = search_metadata.get("json_endpoint")
@@ -123,24 +123,24 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
                 best_flights = []
 
                 if json_endpoint:
-                    print(f"\n🔗 [Downloading Full Payload]: {json_endpoint}")
+                    print(f"\n[Downloading Full Payload]: {json_endpoint}")
 
                     # Open a quick HTTP session to grab the complete JSON file
                     async with aiohttp.ClientSession() as session:
                         async with session.get(json_endpoint) as response:
                             if response.status == 200:
                                 full_data = await response.json()
+                                if isinstance(full_data, str):
+                                    full_data = json.loads(full_data)
                                 best_flights = full_data.get("best_flights", [])
                             else:
-                                print(f"\n⚠️ [Download Failed]: HTTP {response.status}")
+                                print(f"\n[Download Failed]: HTTP {response.status}")
                 else:
-                    # Fallback just in case the data WAS included in the direct response
+                    # Fallback just in case the data was included in the direct response
                     best_flights = tool_data.get("best_flights", [])
 
-                best_flights = json_endpoint.get("", [])
-
                 if not best_flights:
-                    print("\n⚠️ [Warning] No 'best_flights' found for this date combo.")
+                    print("\n[Warning] No 'best_flights' found for this date combo.")
 
                 for f in best_flights:
                     cleaned_flight = extract_essential_flight_data(f, requested_class)
@@ -148,7 +148,7 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
                         flight_results.append(cleaned_flight)
 
             except Exception as e:
-                print(f"\n💥 [Extraction Parsing Error]: {e}")
+                print(f"\n[Extraction Parsing Error]: {e}")
     print("=" * 63 + "\n")
     # Sort results by airline
     sorted_results = sorted(flight_results, key=lambda x: x.get("airline", "zzzzzz"))
