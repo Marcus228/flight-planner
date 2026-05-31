@@ -1,19 +1,32 @@
-from typing import Literal
+from typing import Literal, List
 from enum import Enum
 
+type AirlineShortcode = str
+
 # allowed airlines to infer the information about
-class AllowedAirlines(str, Enum):
-    VIRGIN_ATLANTIC = "Virgin Atlantic"
-    SWISS = "Swiss"
-    LUFTHANSA = "Lufthansa"
-    TURKISH = "Turkish"
-    KLM = "KLM"
-    AIR_FRANCE = "Air France"
-    BRITISH_AIRWAYS = "British Airways"
-    AIR_INDIA = "Air India"
-    EMIRATES = "Emirates"
-    ETIHAD = "Etihad"
-    ALL = "All"
+# the shortcodes were taken from https://www.iata.org/en/publications/directories/code-search?
+allowedAirlines: List[AirlineShortcode] = [
+    # Virgin Atlantic Airways Ltd
+    "VS",
+    # SWISS International Air Lines Ltd.
+    "LX",
+    # Lufthansa and Lufthansa Cargo AG
+    "LH",
+    # Turkish Airlines Inc
+    "TK",
+    # KLM
+    "KL",
+    # Air France
+    "AF",
+    # British Airways PLC
+    "BA",
+    # Air India dba Air India
+    "AI",
+    # Emirates
+    "EK",
+    # Etihad Airways Dba Etihad Airways PJSC
+    "EY"
+]
 
 # travel classification enum class
 # used to extract flights of the specific class
