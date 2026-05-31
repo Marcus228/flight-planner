@@ -19,9 +19,8 @@ def get_structured_llm(schema, temperature: float = 0.0):
     if not custom_key:
         raise ValueError("CRITICAL: LLM_API_KEY environment variable is not set.")
 
-    # inject the key explicitly using the api_key parameter
     llm = ChatGoogleGenerativeAI(
-        model="gemini-2.5-flash",
+        model="gemini-3.5-flash",
         temperature=temperature,
         api_key=custom_key
     )

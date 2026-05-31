@@ -9,14 +9,11 @@ class FlightAgentState(TypedDict):
     retry_count: int
     error_message: Optional[str]
 
-    # outputs of extractor stage
+    # outputs of extractor node
     parsed_parameters: Optional[dict]
 
-    # outputs of the planner stage
+    # used locally in mcp_fetcher node
     api_queries: List[Dict[str, Any]]
 
-    # outputs of the fetcher stage
+    # outputs of the mcp_fetcher node
     flight_results: List[Dict[str, Any]]
-
-    # csv file path
-    csv_file_path: str | None

@@ -1,19 +1,32 @@
-from typing import Literal
+from typing import Set
 from enum import Enum
 
+type AirlineShortcode = str
+
 # allowed airlines to infer the information about
-class AllowedAirlines(str, Enum):
-    VIRGIN_ATLANTIC = "Virgin Atlantic"
-    SWISS = "Swiss"
-    LUFTHANSA = "Lufthansa"
-    TURKISH = "Turkish"
-    KLM = "KLM"
-    AIR_FRANCE = "Air France"
-    BRITISH_AIRWAYS = "British Airways"
-    AIR_INDIA = "Air India"
-    EMIRATES = "Emirates"
-    ETIHAD = "Etihad"
-    ALL = "All"
+# the shortcodes were taken from https://www.iata.org/en/publications/directories/code-search?
+allowedAirlines: Set[AirlineShortcode] = {
+    # Virgin Atlantic Airways Ltd
+    "VS",
+    # SWISS International Air Lines Ltd.
+    "LX",
+    # Lufthansa and Lufthansa Cargo AG
+    "LH",
+    # Turkish Airlines Inc
+    "TK",
+    # KLM
+    "KL",
+    # Air France
+    "AF",
+    # British Airways PLC
+    "BA",
+    # Air India dba Air India
+    "AI",
+    # Emirates
+    "EK",
+    # Etihad Airways Dba Etihad Airways PJSC
+    "EY"
+}
 
 # travel classification enum class
 # used to extract flights of the specific class
@@ -28,10 +41,6 @@ class TravelClass(str, Enum):
 #   the timeout is declared
 MAX_EXTRACT_RETRIES = 3
 
-# BATCHING LOGIC for SerpAPI in fetcher node.
+# used for prevention of SerpAPI gateway closure in mcp_fetcher
 # The API allows concurrency, but batching is defaulted to size 5 to be safe
-BATCH_SIZE = 5
-
-# determines how many top results to retrieve per API call
-# 2 is recommended to ensure state is manageable
-TOP_RESULTS = 2
+MAX_CONCURRENT_API_CALLS = 10

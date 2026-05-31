@@ -1,9 +1,6 @@
-# import the model factory
 from core.llm import get_structured_llm
-# some crucial imports
 from core.state import FlightAgentState
 from core.config import MAX_EXTRACT_RETRIES
-# this TypedDict is the binder of the node
 from nodes.extractor.schema import FlightSearchIntent
 
 
@@ -60,7 +57,7 @@ def route_after_extraction(state: FlightAgentState) -> str:
 
     # happy path: Valid data generated, no errors
     if state.get("parsed_parameters") and not error_message:
-        return "planner"
+        return "mcp_fetcher"
 
     # timeout guard: if errors persist past threshold, break execution hard
     if retry_count >= MAX_EXTRACT_RETRIES:

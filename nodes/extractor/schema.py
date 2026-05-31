@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, model_validator
-from typing import List, Optional
-from core.config import AllowedAirlines, TravelClass
+from typing import Optional
+from core.config import TravelClass
 from datetime import datetime
 
 # base model for storing the date window for departure/return
@@ -22,7 +22,6 @@ class DateWindow(BaseModel):
         except ValueError:
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
-        # check whether the start and end dates are chronologically correct
         if end < start:
             raise ValueError(
                 f"Window error: The end date ({self.end_date}) "
@@ -55,14 +54,11 @@ class FlightSearchIntent(BaseModel):
                     "Leave null if the flight type specified by the user is one-way.",
         default = None,
     )
-    airlines: List[AllowedAirlines] = Field(
-        default=[AllowedAirlines.ALL],
-        description="The list of airlines explicitly requested by the user.",
-    )
     flight_class: TravelClass = Field(
         default=TravelClass.ECONOMY,
         description=("The flight class of the flight requested by the user." 
-                     "CRITICAL INSTRUCTION: Look for a string combination '* class', where * is any word, in user input."
+                     "CRITICAL INSTRUCTION: Look for a string combination '* class',"
+                     "where * is any word in user input."
                      "The * word is likely to be the flight class"),
     )
 
@@ -78,11 +74,9 @@ class FlightSearchIntent(BaseModel):
             dep_start = datetime.strptime(self.departure_window.start_date, "%Y-%m-%d")
             ret_start = datetime.strptime(self.return_window.start_date, "%Y-%m-%d")
         except ValueError:
-            # If the LLM output something weird like "next tuesday", standard validation
-            # or this block will catch it.
+            # LLM callback instruction
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
-        # check dates are chronological
         if ret_start < dep_start:
             raise ValueError(
                 f"Logical error: The return start date ({self.return_window.start_date}) "
