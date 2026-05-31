@@ -1,10 +1,8 @@
 import csv
 import os
-
 from core.config import allowedAirlines
 from core.state import FlightAgentState
 
-# define the output directory and filename
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 # the OUTPUT_DIR assumes that the formatter is called in core directory.
 OUTPUT_DIR = os.path.join(CURRENT_DIR, "..", "..", "output")
@@ -37,11 +35,9 @@ def formatter_node(state: FlightAgentState):
         writer.writerow(headers)
 
         for flight in flight_results:
-            flight_codes  = flight.get("flight_codes", set())
-            # if no allowed airlines are used, then don't display
+            flight_codes = {a.strip() for a in flight.get("airline_codes", "").split(",")}
             if not (flight_codes & set(allowedAirlines)):
                 continue
-
             # parse the outbound date from the SerpApi departure_time string (e.g., "2026-06-01 10:00")
             dep_time_str = flight.get("departure_time", "")
             outbound_date = dep_time_str.split(" ")[0] if dep_time_str and dep_time_str != "N/A" else "N/A"
@@ -67,4 +63,4 @@ def formatter_node(state: FlightAgentState):
             ]
 
             writer.writerow(row)
-        print(f"[Formatter Node] Formatting {len(flight_results)} flights into CSV...")
+        print("[Formatter Node] Formatting flight results into CSV...")

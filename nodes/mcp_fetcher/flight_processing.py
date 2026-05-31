@@ -15,16 +15,16 @@ def extract_essential_flight_data(outward_flight_json: dict, return_flight_json:
         arrival_leg = outward_flights[-1]
 
         extracted_airlines = set()
-        extracted_codes = set()
+        extracted_codes = []
         for flight in outward_flights + return_flights:
             extracted_airlines.add(flight["airline"])
             flight_number = flight.get("flight_number", "")
-            extracted_codes.add(flight_number.split(" ")[0] if flight_number else "")
+            extracted_codes.append(flight_number.split(" ")[0] if flight_number else "")
 
 
         flight_information = {
                 "airlines": ",".join(extracted_airlines),
-                "airline_codes": ",".join(extracted_codes),
+                "airline_codes": ",".join(c for c in extracted_codes if c),
                 "departure_time": departure_leg.get("departure_airport", {}).get("time", "N/A"),
                 "departure_airport": departure_leg.get("departure_airport", {}).get("name", "N/A"),
                 "arrival_airport": arrival_leg.get("arrival_airport", {}).get("name", "N/A"),
@@ -33,7 +33,7 @@ def extract_essential_flight_data(outward_flight_json: dict, return_flight_json:
             }
 
         if return_flights:
-            return_leg = return_flights[0]
+            return_leg = return_flights[-1]
             flight_information.update({
                     "return_time": return_leg.get("arrival_airport", {}).get("time", "N/A"),
                     "return_airport": return_leg.get("arrival_airport", {}).get("name", "N/A"),
@@ -48,7 +48,7 @@ async def execute_single_flight_search(mcp_tool, query_params, semaphore: asynci
     try:
         print("Entering execute_single_flight_search...")
 
-        # --- First call: get outbound flights ---
+        # first API call get outbound flights
         async with semaphore:
             outbound_response = await mcp_tool.ainvoke({"params": query_params})
 
