@@ -11,7 +11,6 @@ def get_mcp_client() -> MultiServerMCPClient:
     if not api_key:
         raise ValueError("CRITICAL: SERPAPI_API_KEY environment variable is not set.")
 
-    # 'sse' (Server-Sent Events) is the standard transport for remote HTTP-based MCP servers
     client = MultiServerMCPClient({
         "serpapi": {
             "transport": "http",

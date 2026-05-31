@@ -34,7 +34,6 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
         batch_results = await asyncio.gather(*tasks)
         for result_list in batch_results:
             flight_results.extend(result_list)
-    # sort results by airlines
     sorted_results = sorted(flight_results, key=lambda x: x.get("airlines", "zzzzzz"))
 
     print(f"[MCP Fetcher] Programmatic execution complete. Extracted {len(sorted_results)} flights.")

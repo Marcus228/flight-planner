@@ -1,7 +1,5 @@
 from langgraph.graph import StateGraph, START, END
 from core.state import FlightAgentState
-
-# importing the nodes
 from nodes.extractor.node import extractor_node, route_after_extraction
 from nodes.formatter.node import formatter_node, OUTPUT_FILE
 from nodes.mcp_fetcher.node import mcp_fetcher_node
@@ -37,11 +35,7 @@ def build_graph():
 async def main():
     app = build_graph()
 
-    # user_prompt : str = input("Please enter the required flight details:")
-    user_prompt : str = ("I need a round-trip flight from London (LHR) to Tokyo (HND). "
-                         "I want to leave sometime between 2026-10-10 and 2026-10-12, "
-                         "and I want to return on 2026-10-20."
-                         "I want to fly in Business class.")
+    user_prompt : str = input("Please enter the required flight details:")
     print(f"\n[USER INPUT] {user_prompt}\n" + "-" * 50)
 
     initial_state: FlightAgentState = {

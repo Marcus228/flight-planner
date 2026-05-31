@@ -1,9 +1,6 @@
-# import the model factory
 from core.llm import get_structured_llm
-# some crucial imports
 from core.state import FlightAgentState
 from core.config import MAX_EXTRACT_RETRIES
-# this TypedDict is the binder of the node
 from nodes.extractor.schema import FlightSearchIntent
 
 

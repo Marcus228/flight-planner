@@ -22,7 +22,6 @@ class DateWindow(BaseModel):
         except ValueError:
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
-        # check whether the start and end dates are chronologically correct
         if end < start:
             raise ValueError(
                 f"Window error: The end date ({self.end_date}) "
@@ -75,11 +74,9 @@ class FlightSearchIntent(BaseModel):
             dep_start = datetime.strptime(self.departure_window.start_date, "%Y-%m-%d")
             ret_start = datetime.strptime(self.return_window.start_date, "%Y-%m-%d")
         except ValueError:
-            # If the LLM output something weird like "next tuesday", standard validation
-            # or this block will catch it.
+            # LLM callback instruction
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
-        # check dates are chronological
         if ret_start < dep_start:
             raise ValueError(
                 f"Logical error: The return start date ({self.return_window.start_date}) "

@@ -28,7 +28,7 @@ def generate_queries(params: dict) -> list[str]:
         ret_dates = generate_date_range(params["return_window"]["start_date"], params["return_window"]["end_date"])
         for dep in dep_dates:
             for ret in ret_dates:
-                if ret >= dep:  # chronology check
+                if ret >= dep:
                     queries.append({
                         "departure_id": origin,
                         "arrival_id": destination,
