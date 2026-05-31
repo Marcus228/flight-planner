@@ -8,7 +8,6 @@ CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
 OUTPUT_DIR = os.path.join(CURRENT_DIR, "..", "..", "output")
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "flight_results.csv")
 
-
 def formatter_node(state: FlightAgentState) -> dict:
     """
     Takes the aggregated flight results from the Fetcher node and
@@ -21,7 +20,7 @@ def formatter_node(state: FlightAgentState) -> dict:
 
     # define the schema
     headers = [
-        "Airline",
+        "Airlines",
         "Outbound Date",
         "Departure Airport",
         "Arrival Airport",
@@ -52,7 +51,7 @@ def formatter_node(state: FlightAgentState) -> dict:
 
             # build the row matching the schema
             row = [
-                flight.get("airline", "Unknown"),  # 1. Airline
+                flight.get("airlines", "Unknown"),  # 1. Airline
                 outbound_date,  # 2. Outbound Date
                 flight.get("departure_airport", "Unknown"),  # 3. Departure Airport
                 flight.get("arrival_airport", "Unknown"),  # 4. Arrival Airport
@@ -63,10 +62,3 @@ def formatter_node(state: FlightAgentState) -> dict:
             ]
 
             writer.writerow(row)
-
-    print(f"[Formatter Node] Successfully saved results to {OUTPUT_FILE}")
-
-    # return the file path to the state so the graph knows where the final output lives
-    return {
-        "csv_file_path": OUTPUT_FILE
-    }

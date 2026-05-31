@@ -1,4 +1,4 @@
-from typing import Literal, List
+from typing import List
 from enum import Enum
 
 type AirlineShortcode = str
