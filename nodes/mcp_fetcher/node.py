@@ -34,7 +34,22 @@ async def mcp_fetcher_node(state: FlightAgentState) -> dict:
         batch_results = await asyncio.gather(*tasks)
         for result_list in batch_results:
             flight_results.extend(result_list)
-    sorted_results = sorted(flight_results, key=lambda x: x.get("airlines", "zzzzzz"))
+
+    # deduplicate the flights
+    seen = set()
+    unique_results = []
+    for flight in flight_results:
+        key = (
+            flight.get("airlines"),
+            flight.get("departure_time"),
+            flight.get("return_time"),
+            flight.get("price")
+        )
+        if key not in seen:
+            seen.add(key)
+            unique_results.append(flight)
+
+    sorted_results = sorted(unique_results, key=lambda x: x.get("airlines", "zzzzzz"))
 
     print(f"[MCP Fetcher] Programmatic execution complete. Extracted {len(sorted_results)} flights.")
 
