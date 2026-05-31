@@ -3,7 +3,7 @@ from core.state import FlightAgentState
 
 # importing the nodes
 from nodes.extractor.node import extractor_node, route_after_extraction
-from nodes.formatter.node import formatter_node
+from nodes.formatter.node import formatter_node, OUTPUT_FILE
 from nodes.mcp_fetcher.node import mcp_fetcher_node
 
 # program control
@@ -51,15 +51,14 @@ async def main():
         "flight_results": [],
         "error_message": None,
         "retry_count": 0,
-        "csv_file_path": None
     }
 
     # execute the graph asynchronously
     try:
-        final_state = await app.ainvoke(initial_state)
+        await app.ainvoke(initial_state)
         print("\n" + "=" * 50)
         print("AGENT EXECUTION COMPLETE")
-        print(f"Results saved to: {final_state.get('csv_file_path')}")
+        print(f"Results saved to: {OUTPUT_FILE}")
         print("=" * 50)
 
     except Exception as e:
