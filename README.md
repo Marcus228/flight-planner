@@ -82,3 +82,46 @@ Some results may display airline names that are not in the configured allowed li
 
 ### Output
 Results are written to `output/flight_results.csv` relative to the project root on each run. The file is overwritten on each execution.
+
+### Running
+
+```bash
+bash run.sh
+```
+
+Or make it directly executable first:
+
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+---
+
+## Project Structure
+
+```
+flight-planner/
+├── core/
+│   ├── config.py          # Allowed airlines, constants, travel class enum
+│   ├── graph.py           # LangGraph state machine definition
+│   ├── llm.py             # LLM factory — swap models without changing pipeline
+│   ├── mcp_client.py      # MCP client setup for SerpApi
+│   ├── run_agent.py       # Entry point
+│   └── state.py           # FlightAgentState TypedDict
+├── nodes/
+│   ├── extractor/         # LLM extraction node and FlightSearchIntent schema
+│   ├── formatter/         # CSV formatting node
+│   └── mcp_fetcher/
+│       ├── flight_processing.py  # API calls and data extraction
+│       ├── helpers.py            # Query generation and date range utilities
+│       └── node.py               # MCP fetcher node entry point
+├── output/
+│   └── flight_results.csv # Generated on each run
+├── .env                   # API keys (not committed)
+├── .gitignore
+├── install.sh             # Dependency installer
+├── run.sh                 # Run script
+├── spec                   # Original specification
+└── README.md
+```
