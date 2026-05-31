@@ -40,7 +40,7 @@ async def main():
     # user_prompt : str = input("Please enter the required flight details:")
     user_prompt : str = ("I need a round-trip flight from London (LHR) to Tokyo (HND). "
                          "I want to leave sometime between 2026-10-10 and 2026-10-12, "
-                         "and I want to return between 2026-10-20 and 2026-10-21."
+                         "and I want to return on 2026-10-20."
                          "I want to fly in Business class.")
     print(f"\n[USER INPUT] {user_prompt}\n" + "-" * 50)
 
