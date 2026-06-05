@@ -1,6 +1,8 @@
 # IDE folder
 .idea
-# ignore tests and diagnostic script
+# ignore tests and diagnostic scripts
 tests
 # ignore the environmental variables
 .env
+# ignore the previous model output
+output
