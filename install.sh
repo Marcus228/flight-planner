@@ -9,6 +9,6 @@ pip install \
     langchain-google-genai \
     langchain-mcp-adapters \
     python-dotenv \
-    aiohttp \
+    aiohttp
 
 echo "All dependencies installed."
