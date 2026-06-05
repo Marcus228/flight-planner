@@ -21,9 +21,9 @@ def formatter_node(state: FlightAgentState):
     headers = [
         "Airlines",
         "Outbound Date",
+        "Return Date",
         "Departure Airport",
         "Arrival Airport",
-        "Return Date",
         "Return Airport",
         "Flight Class",
         "Total Cost"
