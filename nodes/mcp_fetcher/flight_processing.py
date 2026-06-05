@@ -30,7 +30,7 @@ def extract_essential_flight_data(outward_flight_json: dict, return_flight_json:
                 "arrival_airport": arrival_leg.get("arrival_airport", {}).get("name", "N/A"),
                 "flight_class": departure_leg.get("travel_class", "N/A"),
                 "price": outward_flight_json.get("price"),
-            }
+        }
 
         if return_flights:
             return_leg = return_flights[-1]
@@ -54,7 +54,7 @@ async def execute_single_flight_search(mcp_tool, query_params, semaphore: asynci
 
         outbound_json = convert_tool_response_to_json(outbound_response)
         serpapi_response = json.loads(outbound_json[0].get("text", ""))
-        all_outbound = serpapi_response.get("best_flights", []) or [] + serpapi_response.get("other_flights", []) or []
+        all_outbound = (serpapi_response.get("best_flights", []) or []) + serpapi_response.get("other_flights", []) or []
 
         is_round_trip = "return_date" in query_params
 
@@ -79,7 +79,7 @@ async def execute_single_flight_search(mcp_tool, query_params, semaphore: asynci
 
             return_json = convert_tool_response_to_json(return_response)
             return_serpapi = json.loads(return_json[0].get("text", ""))
-            all_return = return_serpapi.get("best_flights", []) or [] + return_serpapi.get("other_flights", []) or []
+            all_return = (return_serpapi.get("best_flights", []) or []) + return_serpapi.get("other_flights", []) or []
 
             for return_flight in all_return:
                 extracted = extract_essential_flight_data(outbound_flight, return_flight)
