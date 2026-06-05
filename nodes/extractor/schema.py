@@ -35,8 +35,8 @@ class FlightSearchIntent(BaseModel):
     origin: str = Field(
         description=(
             "The strictly uppercase 3-letter IATA airport code for departure. "
-            "CRITICAL INSTRUCTION: If the user provides a city name (e.g., 'London'), "
-            "you MUST use your knowledge to convert it to the primary 3-letter airport code (e.g., 'LHR')."
+            "CRITICAL INSTRUCTION: For cities with multiple airports (e.g. London, Tokyo, New York), "
+            "prefer the largest international hub unless the user specifies otherwise."
         )
     )
     destination: str = Field(

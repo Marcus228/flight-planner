@@ -38,13 +38,11 @@ def formatter_node(state: FlightAgentState):
             flight_codes = {a.strip() for a in flight.get("airline_codes", "").split(",")}
             if not (flight_codes & set(allowedAirlines)):
                 continue
-            # parse the outbound date from the SerpApi departure_time string (e.g., "2026-06-01 10:00")
-            dep_time_str = flight.get("departure_time", "")
-            outbound_date = dep_time_str.split(" ")[0] if dep_time_str and dep_time_str != "N/A" else "N/A"
+            # parse the outbound date
+            dep_time_str = flight.get("departure_time", "N/A")
 
             # parse the return date (if it's a one-way flight, this safely defaults to N/A)
             ret_time_str = flight.get("return_time", "N/A")
-            return_date = ret_time_str.split(" ")[0] if ret_time_str != "N/A" else "N/A"
 
             # format the price safely (handling None if the API dropped the price)
             price = flight.get("price")
@@ -53,10 +51,10 @@ def formatter_node(state: FlightAgentState):
             # build the row matching the schema
             row = [
                 flight.get("airlines", "N/A"),
-                outbound_date,
+                dep_time_str,
                 flight.get("departure_airport", "N/A"),
                 flight.get("arrival_airport", "N/A"),
-                return_date,
+                ret_time_str,
                 flight.get("return_airport", "N/A"),
                 flight.get("flight_class", "N/A"),
                 price_str
