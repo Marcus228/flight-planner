@@ -47,10 +47,12 @@ class FlightSearchIntent(BaseModel):
         )
     )
     departure_window: DateWindow = Field(
-        description="The date range when user wants to depart.",
+        description="The date range when user wants to depart. "
+                    f"If no year is specified, assume it's current {datetime.now().year} year.",
     )
     return_window: Optional[DateWindow] = Field(
         description="The date range when user wants to return. "
+                    f"If no year is specified, assume it's {datetime.now().year} year."
                     "Leave null if the flight type specified by the user is one-way.",
         default = None,
     )
@@ -62,26 +64,34 @@ class FlightSearchIntent(BaseModel):
                      "The * word is likely to be the flight class"),
     )
 
-    @model_validator(mode = 'after')
+    @model_validator(mode='after')
     def validate_chronology(self) -> 'FlightSearchIntent':
-        # if it's a one-way flight, return the instance
-        if not self.return_window:
-            return self
-
-        # parse the ISO strings into comparable datetime objects
-        # if the parse fails, ValueError is raised
         try:
             dep_start = datetime.strptime(self.departure_window.start_date, "%Y-%m-%d")
-            ret_start = datetime.strptime(self.return_window.start_date, "%Y-%m-%d")
         except ValueError:
-            # LLM callback instruction
             raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
 
+        # past date check applies to all flights, one-way or return
+        if dep_start < datetime.today():
+            raise ValueError(
+                f"Logical error: The departure start date ({self.departure_window.start_date}) "
+                f"cannot be in the past."
+            )
+        # one-way: no further checks needed
+        if not self.return_window:
+            return self
+        try:
+            ret_start = datetime.strptime(self.return_window.start_date, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Dates must be strictly in YYYY-MM-DD format.")
         if ret_start < dep_start:
             raise ValueError(
                 f"Logical error: The return start date ({self.return_window.start_date}) "
                 f"cannot be earlier than the departure start date ({self.departure_window.start_date})."
             )
-
-        # if all checks pass, return the instance
+        if ret_start < datetime.today():
+            raise ValueError(
+                f"Logical error: The return start date ({self.return_window.start_date}) "
+                f"cannot be in the past."
+            )
         return self
