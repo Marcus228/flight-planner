@@ -3,6 +3,10 @@ from core.state import FlightAgentState
 from core.config import MAX_EXTRACT_RETRIES
 from nodes.extractor.schema import FlightSearchIntent
 
+UNRESOLVABLE_ERRORS = [
+    "cannot be earlier than the departure start date",
+    "cannot be in the past",
+]
 
 def extractor_node(state: FlightAgentState) -> dict:
     """
@@ -53,20 +57,18 @@ def extractor_node(state: FlightAgentState) -> dict:
 # feedback loop
 def route_after_extraction(state: FlightAgentState) -> str:
     retry_count = state.get("retry_count", 0)
-    error_message = state.get("error_message")
+    error_message = state.get("error_message", "")
 
-    # happy path: Valid data generated, no errors
     if state.get("parsed_parameters") and not error_message:
         return "mcp_fetcher"
 
-    # timeout guard: if errors persist past threshold, break execution hard
     if retry_count >= MAX_EXTRACT_RETRIES:
-        raise TimeoutError(
-            f"Agent Execution Halted: Extractor stuck in infinite correction loop. "
-            f"Exceeded maximum threshold of {MAX_EXTRACT_RETRIES} attempts. "
-            f"Final validation trace: {error_message}"
-        )
+        raise TimeoutError(...)
 
-    # feedback loop path: errors exist but budget remains -> route back to extractor
+    # if the error is unresolvable by the LLM, fail fast
+    if any(e in error_message for e in UNRESOLVABLE_ERRORS):
+        clean_message = error_message.split("Value error, ")[-1].split(" [type=")[0]
+        raise ValueError(f"Invalid user input: {clean_message} Please correct your request.")
+
     print(f"Validation failure detected on attempt {retry_count}. Retrying Extraction...")
     return "extractor"
