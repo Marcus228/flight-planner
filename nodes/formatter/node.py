@@ -1,6 +1,5 @@
 import csv
 import os
-from core.config import allowedAirlines
 from core.state import FlightAgentState
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -35,9 +34,6 @@ def formatter_node(state: FlightAgentState):
         writer.writerow(headers)
 
         for flight in flight_results:
-            flight_codes = {a.strip() for a in flight.get("airline_codes", "").split(",")}
-            if not (flight_codes & set(allowedAirlines)):
-                continue
             # parse the outbound date
             dep_time_str = flight.get("departure_time", "N/A")
 
@@ -52,9 +48,9 @@ def formatter_node(state: FlightAgentState):
             row = [
                 flight.get("airlines", "N/A"),
                 dep_time_str,
+                ret_time_str,
                 flight.get("departure_airport", "N/A"),
                 flight.get("arrival_airport", "N/A"),
-                ret_time_str,
                 flight.get("return_airport", "N/A"),
                 flight.get("flight_class", "N/A"),
                 price_str
