@@ -2,6 +2,9 @@ import ast
 import asyncio
 import json
 
+from core.config import allowedAirlines
+
+
 def extract_essential_flight_data(outward_flight_json: dict, return_flight_json: dict) -> dict:
     """Strips down the Google Flights JSON object into a lightweight dictionary."""
     try:
@@ -54,7 +57,11 @@ async def execute_single_flight_search(mcp_tool, query_params, semaphore: asynci
 
         outbound_json = convert_tool_response_to_json(outbound_response)
         serpapi_response = json.loads(outbound_json[0].get("text", ""))
-        all_outbound = (serpapi_response.get("best_flights", []) or []) + serpapi_response.get("other_flights", []) or []
+
+        all_outbound = filter_by_allowed_airlines(
+            (serpapi_response.get("best_flights", []) or [])
+            + (serpapi_response.get("other_flights", []) or [])
+        )
 
         is_round_trip = "return_date" in query_params
 
@@ -79,7 +86,10 @@ async def execute_single_flight_search(mcp_tool, query_params, semaphore: asynci
 
             return_json = convert_tool_response_to_json(return_response)
             return_serpapi = json.loads(return_json[0].get("text", ""))
-            all_return = (return_serpapi.get("best_flights", []) or []) + return_serpapi.get("other_flights", []) or []
+
+            all_return = filter_by_allowed_airlines(
+                (return_serpapi.get("best_flights", []) or []) + (return_serpapi.get("other_flights", []) or [])
+            )
 
             for return_flight in all_return:
                 extracted = extract_essential_flight_data(outbound_flight, return_flight)
@@ -100,3 +110,13 @@ def convert_tool_response_to_json(tool_response):
         return json.loads(tool_response)
     else:
         return tool_response
+
+def filter_by_allowed_airlines(flights: list) -> list:
+    return [
+        flight for flight in flights
+        if any(
+            # extracts the airline code
+            flight_leg.get("flight_number", "").split(" ")[0] in allowedAirlines
+            for flight_leg in flight.get("flights", [])
+        )
+    ]
