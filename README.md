@@ -68,9 +68,13 @@ SERPAPI_API_KEY=your_serpapi_api_key
 `LLM_KEY` is consumed by the LLM factory — a modular abstraction in the Extractor node that allows different language models to be swapped in without changing the rest of the pipeline. By default this is configured for Gemini, but the factory can be pointed at any supported model by updating the relevant configuration. The SerpApi key is used by the MCP Fetcher node to query Google Flights data.
 
 ### Installation
-
+#### Linux
 ```bash
 bash install.sh
+```
+#### Windows
+```powershell
+.\install.ps1
 ```
 
 ---
@@ -84,7 +88,7 @@ Some results may display airline names that are not in the configured allowed li
 Results are written to `output/flight_results.csv` relative to the project root on each run. The file is overwritten on each execution.
 
 ### Running
-
+#### Linux
 ```bash
 bash run.sh
 ```
@@ -95,6 +99,12 @@ Or make it directly executable first:
 chmod +x run.sh
 ./run.sh
 ```
+
+#### Windows
+```powershell
+.\run.ps1
+```
+
 
 ---
 
