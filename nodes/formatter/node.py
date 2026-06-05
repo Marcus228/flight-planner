@@ -19,13 +19,13 @@ def formatter_node(state: FlightAgentState):
 
     # define the schema
     headers = [
-        "Airlines",
+        "Airline",
+        "Flight Class",
         "Outbound Date",
-        "Return Date",
         "Departure Airport",
         "Arrival Airport",
+        "Return Date",
         "Return Airport",
-        "Flight Class",
         "Total Cost"
     ]
 
@@ -47,12 +47,12 @@ def formatter_node(state: FlightAgentState):
             # build the row matching the schema
             row = [
                 flight.get("airlines", "N/A"),
+                flight.get("flight_class", "N/A"),
                 dep_time_str,
-                ret_time_str,
                 flight.get("departure_airport", "N/A"),
                 flight.get("arrival_airport", "N/A"),
+                ret_time_str,
                 flight.get("return_airport", "N/A"),
-                flight.get("flight_class", "N/A"),
                 price_str
             ]
 
