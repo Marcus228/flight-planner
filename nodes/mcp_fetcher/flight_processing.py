@@ -115,6 +115,7 @@ def filter_by_allowed_airlines(flights: list) -> list:
     return [
         flight for flight in flights
         if any(
+            # extracts the airline code
             flight_leg.get("flight_number", "").split(" ")[0] in allowedAirlines
             for flight_leg in flight.get("flights", [])
         )
