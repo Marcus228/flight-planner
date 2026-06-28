@@ -34,11 +34,15 @@ def formatter_node(state: FlightAgentState):
         writer.writerow(headers)
 
         for flight in flight_results:
-            # parse the outbound date
+            # safely parse the outbound date and time
             dep_time_str = flight.get("departure_time", "N/A")
+            if dep_time_str != "N/A":
+                dep_time_str = " ".join(dep_time_str.split("T")[::-1])
 
-            # parse the return date (if it's a one-way flight, this safely defaults to N/A)
+            # safely parse the return date (if it's a one-way flight, this safely defaults to N/A)
             ret_time_str = flight.get("return_time", "N/A")
+            if ret_time_str != "N/A":
+                ret_time_str = " ".join(ret_time_str.split("T")[::-1])
 
             # build the row matching the schema
             row = [
