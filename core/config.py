@@ -40,9 +40,9 @@ class TravelClass(str, Enum):
 # max retry threshold configuration for extractor node
 #   if the model fails to provide the reply after MAX_EXTRACT_REPLIES,
 #   the timeout is declared
-MAX_EXTRACT_RETRIES: int= 3
+MAX_EXTRACT_RETRIES: int = 3
 
-# used for prevention of SerpAPI gateway closure in mcp_fetcher
+# used for prevention of API gateway closure in mcp_fetcher
 # The API allows concurrent calls, and recommended cap is 25% of
 #     the current rate. Uncapped to increase speed of response.
 MAX_CONCURRENT_API_CALLS: int = sys.maxsize
