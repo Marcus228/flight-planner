@@ -40,10 +40,6 @@ def formatter_node(state: FlightAgentState):
             # parse the return date (if it's a one-way flight, this safely defaults to N/A)
             ret_time_str = flight.get("return_time", "N/A")
 
-            # format the price safely (handling None if the API dropped the price)
-            price = flight.get("price")
-            price_str = f"${price}" if price is not None else "N/A"
-
             # build the row matching the schema
             row = [
                 flight.get("airlines", "N/A"),
@@ -53,7 +49,7 @@ def formatter_node(state: FlightAgentState):
                 flight.get("arrival_airport", "N/A"),
                 ret_time_str,
                 flight.get("return_airport", "N/A"),
-                price_str
+                flight.get("price")
             ]
 
             writer.writerow(row)
