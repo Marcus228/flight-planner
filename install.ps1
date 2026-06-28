@@ -7,8 +7,7 @@ pip install `
     pydantic `
     langgraph `
     langchain-google-genai `
-    langchain-mcp-adapters `
     python-dotenv `
-    aiohttp
+    httpx
 
 Write-Host "All dependencies installed."
