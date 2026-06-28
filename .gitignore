@@ -6,3 +6,5 @@ tests
 .env
 # ignore the previous model output
 output
+# pyc files
+*.pyc
