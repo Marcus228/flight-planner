@@ -40,7 +40,6 @@ def extractor_node(state: FlightAgentState) -> dict:
             ("system", system_prompt),
             ("human", user_prompt)
         ])
-        print(f"Extracted: {extracted_object.model_dump()}")
         return {
             "parsed_parameters": extracted_object.model_dump(),
             "error_message": None,
